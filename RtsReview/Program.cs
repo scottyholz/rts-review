@@ -111,7 +111,15 @@ namespace RtsReview
 
         private static void PerformExerciseTwo()
         {
-            Console.WriteLine("You chose Exercise #2 --> ");
+            Console.WriteLine("You chose Exercise #2 --> Rotate the characters in a string by a given input and have the overflow appear at the beginning");
+            // prompt user for a string 
+            // validate they entered something 
+            // prompt for int to cut word by 
+            // get length of string
+            // validate int they gave is in the correct limit (not greater than the lenght of the string) 
+            // get first half of string substring(0, totalLength - int)  
+            // get second half of string substring(int, totalLength) 
+            //recombine 
         }
 
         private static void PerformExerciseThree()
