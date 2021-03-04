@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace RtsReview
 {
@@ -33,7 +34,8 @@ namespace RtsReview
                     break;
             }
 
-            Console.WriteLine("Thank you for checking out my code! Hope you enjoyed it");
+            Console.WriteLine("Thank you for checking out my code! Hope you enjoyed it. Press any key to end.");
+            var ending = Console.ReadKey(false);
         }
 
         private static void ParameterValidationMessage(IList<string> validParameters, string enteredValue)
@@ -49,23 +51,62 @@ namespace RtsReview
         private static void PerformExerciseOne()
         {
             Console.WriteLine("You chose Exercise #1 --> Print the number of integers in an array that are above the given input and the number that are below");
-            //prompt user for array
-            //validate array is in correct format 
-                // must start and end with [ ] 
-                // must only contain integers (no strings, decimals, etc.) 
-                // must be comma separated [1, 3, 5]  vs [1 3 5] vs [1-3-5]
-            // edge cases 
-                // only int, no commas to separate on.  ex [1] 
-                // commas in weird places.  ex [,1,,4,]
-                    // -> may do something cool with this where it trys to parse, offers option to accept, otherwise cancels? 
 
-            // if array is valid, prompt for int 
-            // validate int is valid
+            Console.WriteLine("Please enter an array of integers in the following example format:  [1, 5, 9]");
+            var userArrayInput = Console.ReadLine();
+            var userArrayStringCount = userArrayInput.Length;
+            if (userArrayStringCount == 0)
+            {
+                Console.WriteLine("hmm... it appears no parameter was entered. Please input a valid array for exercise one");
+                var yesNoPromptResponse = YesNoPromptResponse("Do you want to retry this exercise?");
+                if (yesNoPromptResponse) PerformExerciseOne();
+                else Environment.Exit(-1);
+            }
 
-            // if valid, then loop over array and create 2 new lists 
-            // get count of each list, display to user. 
-            // exit 
+            if (!userArrayInput[0].Equals('[') || !userArrayInput[userArrayStringCount - 1].Equals(']'))
+            {
+                Console.WriteLine("hmm... it appears your input did either did not start or finish with a bracket -- [  ] ");
+                var yesNoPromptResponse = YesNoPromptResponse("Do you want to retry this exercise?");
+                if (yesNoPromptResponse) PerformExerciseOne();
+                else Environment.Exit(-1);
+            }
 
+            var splitArray = userArrayInput
+                .Substring(1, userArrayStringCount - 2)
+                .Split(",")
+                .ToList();
+
+            var fullIntArray = new List<int>();
+
+            foreach (var arrayInput in splitArray)
+            {
+                if (Int32.TryParse(arrayInput, out int parsedIntResult))
+                {
+                    fullIntArray.Add(parsedIntResult);
+                }
+                else
+                {
+                    Console.WriteLine($"hmm.. we weren't able to parse -- '{arrayInput}' -- into an integer");
+                    var yesNoPromptResponse = YesNoPromptResponse("Do you want to continue without this in the list?");
+                    if (!yesNoPromptResponse) Environment.Exit(-1);
+                }
+            }
+
+            Console.WriteLine("Congratulations!!! You have entered a valid array!");
+            Console.WriteLine("Please enter a valid integer to compare against.");
+
+            var userInputComparableInt = Console.ReadLine();
+            if (Int32.TryParse(userInputComparableInt, out int comparableParsedInt))
+            {
+                DoExerciseOneComparison(fullIntArray, comparableParsedInt);
+            }
+            else
+            {
+                Console.WriteLine($"hmm.. we weren't able to parse -- '{userInputComparableInt}' -- into an integer");
+                var yesNoPromptResponse = YesNoPromptResponse("Do you want to retry this exercise?");
+                if (yesNoPromptResponse) PerformExerciseOne();
+                else Environment.Exit(-1);
+            }
         }
 
         private static void PerformExerciseTwo()
@@ -76,6 +117,33 @@ namespace RtsReview
         private static void PerformExerciseThree()
         {
             Console.WriteLine("You chose Exercise #3 --> ");
+        }
+
+        private static bool YesNoPromptResponse(string yesNoQuestion)
+        {
+            ConsoleKey response;
+            do
+            {
+                Console.Write($"{yesNoQuestion} [y/n] ");
+                response = Console.ReadKey(false).Key;   
+                if (response != ConsoleKey.Enter)
+                    Console.WriteLine();
+
+            } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+
+            return response == ConsoleKey.Y;
+        }
+
+        private static void DoExerciseOneComparison(IList<int> numberArray, int comparableInt)
+        {
+            var valuesOverComparisonPoint = numberArray.Where(x => x > comparableInt).ToList();
+            var valuesUnderComparisonPoint = numberArray.Where(x => x < comparableInt).ToList();
+            var valuesTheSameAsComparisonPoint = numberArray.Where(x => x == comparableInt).ToList();
+            
+            Console.WriteLine($"[{string.Join(", ", valuesOverComparisonPoint)}] -->  (total of {valuesOverComparisonPoint.Count}) are greater than {comparableInt}");
+            Console.WriteLine($"[{string.Join(", ", valuesUnderComparisonPoint)}] -->  (total of {valuesUnderComparisonPoint.Count}) are less than {comparableInt}");
+            Console.WriteLine($"[{string.Join(", ", valuesTheSameAsComparisonPoint)}] -->  (total of {valuesTheSameAsComparisonPoint.Count}) are the same as {comparableInt}");
+
         }
     }
 }
