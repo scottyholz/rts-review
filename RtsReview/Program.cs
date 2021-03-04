@@ -161,6 +161,9 @@ namespace RtsReview
 
         private static void PerformExerciseThree()
         {
+
+            //todo: trim the fat.  isolate what you want to really discuss here. switches might be too basic. referentially transparent code may be to meta? sleep on it
+
             Console.WriteLine("You chose Exercise #3 --> If you could change 1 thing about your favorite framework/language/platform (pick one), what would it be?");
 
             Console.WriteLine(
