@@ -12,31 +12,47 @@ namespace RtsReview
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello RTS Code Reviewers!");
-            Console.WriteLine("Which of the three Code Exercises would you like to do?  Please enter the exercise number.");
+            Console.WriteLine("Hello RTS Code Reviewers!\n");
+            var runApplication = true;
+
+            do
+            {
+                RunExercisePrompts();
+                 runApplication = YesNoPromptResponse("Do you want to run another exercise?");
+
+            } while (runApplication); 
+
+            Console.WriteLine("Thank you for checking out my code! Hope you enjoyed it. Press any key to end.");
+            Console.ResetColor();
+            var ending = Console.ReadKey(false);
+        }
+
+        private static void RunExercisePrompts()
+        {
+            Console.WriteLine("\nWhich of the three Code Exercises would you like to do?  Please enter the exercise number.");
 
             var exerciseOption = Console.ReadLine();
 
             if (ValidCodeExerciseOptions.All(x => !x.Equals(exerciseOption)))
             {
-                ParameterValidationMessage(ValidCodeExerciseOptions, exerciseOption); 
+                ParameterValidationMessage(ValidCodeExerciseOptions, exerciseOption);
             }
 
             switch (exerciseOption)
             {
-                case "1": PerformExerciseOne();
+                case "1":
+                    PerformExerciseOne();
                     break;
-                case "2": PerformExerciseTwo();
+                case "2":
+                    PerformExerciseTwo();
                     break;
-                case "3": PerformExerciseThree();
+                case "3":
+                    PerformExerciseThree();
                     break;
                 default:
                     ParameterValidationMessage(ValidCodeExerciseOptions, exerciseOption);
                     break;
             }
-
-            Console.WriteLine("Thank you for checking out my code! Hope you enjoyed it. Press any key to end.");
-            var ending = Console.ReadKey(false);
         }
 
         private static void ParameterValidationMessage(IList<string> validParameters, string enteredValue)
@@ -54,7 +70,7 @@ namespace RtsReview
             Console.WriteLine("You chose Exercise #1 --> Print the number of integers in an array that are above the given input and the number that are below");
 
             Console.WriteLine("Please enter an array of integers in the following example format:  [1, 5, 9]");
-            var userArrayInput = Console.ReadLine();
+            var userArrayInput = Console.ReadLine()?.Trim() ?? "";
             var userArrayStringCount = userArrayInput.Length;
             if (userArrayStringCount == 0)
             {
@@ -68,8 +84,12 @@ namespace RtsReview
             {
                 Console.WriteLine("hmm... it appears your input did either did not start or finish with a bracket -- [  ] ");
                 var yesNoPromptResponse = YesNoPromptResponse();
-                if (yesNoPromptResponse) PerformExerciseOne();
-                else Environment.Exit(-1);
+                if (yesNoPromptResponse)
+                {
+                    PerformExerciseOne();
+                    return;
+                }
+                Environment.Exit(-1);
             }
 
             var splitArray = userArrayInput
@@ -105,8 +125,12 @@ namespace RtsReview
             {
                 Console.WriteLine($"hmm.. we weren't able to parse -- '{userInputComparableInt}' -- into an integer");
                 var yesNoPromptResponse = YesNoPromptResponse();
-                if (yesNoPromptResponse) PerformExerciseOne();
-                else Environment.Exit(-1);
+                if (yesNoPromptResponse)
+                {
+                    PerformExerciseOne();
+                    return;
+                }
+                Environment.Exit(-1);
             }
         }
 
@@ -114,11 +138,11 @@ namespace RtsReview
         {
             Console.WriteLine("You chose Exercise #2 --> Rotate the characters in a string by a given input and have the overflow appear at the beginning. \n");
 
-            Console.WriteLine("Please enter the string value you would like rotated. \n ");
-            var stringToRotate = Console.ReadLine();
+            Console.WriteLine("Please enter the string value you would like rotated.\n");
+            var stringToRotate = Console.ReadLine()?.Trim() ?? "";
             if (String.IsNullOrEmpty(stringToRotate))
             {
-                Console.WriteLine($"hmm.. there doesn't appear to be an entered string -- '{stringToRotate}' -- is the recorded value.");
+                Console.WriteLine($"hmm.. there doesn't appear to be an entered string -- '{stringToRotate}' -- is the recorded value.\n");
                 var yesNoPromptResponse = YesNoPromptResponse();
                 if (yesNoPromptResponse) PerformExerciseTwo();
                 else Environment.Exit(-1);
@@ -126,33 +150,37 @@ namespace RtsReview
 
             Console.WriteLine("\nPlease enter the number you would like to rotate this by (must be a valid integer)");
 
-            var rotateNumberString = Console.ReadLine();
+            var rotateNumberString = Console.ReadLine()?.Trim() ?? "";
 
 
             if (Int32.TryParse(rotateNumberString, out int rotateNumber))
             {
+                if (rotateNumber < 0)
+                {
+                    Console.WriteLine($"hmm.. the number you entered -- '{rotateNumberString}' -- is appears to be less than 0.\n");
+                    Console.WriteLine($"This number must be greater than or equal to 0.");
+
+                    var yesNoPromptResponse = YesNoPromptResponse("Do you want to make this number positive and continue?");
+                    var positiveRotateNumber = rotateNumber * -1;
+                    if (yesNoPromptResponse) RotateStringAndPrint(stringToRotate, positiveRotateNumber);
+                    else Environment.Exit(-1);
+                    return;
+                }
                 if (rotateNumber > stringToRotate.Length)
                 {
-                    Console.WriteLine($"hmm.. the number you entered -- '{rotateNumberString}' -- is longer than the amount of characters in the string.");
-                    Console.WriteLine($"The max number that can be entered is {rotateNumberString.Length}");
+                    Console.WriteLine($"hmm.. the number you entered -- '{rotateNumberString}' -- is longer than the amount of characters in the string.\n");
+                    Console.WriteLine($"The max number that can be entered is {stringToRotate.Length}");
                     var yesNoPromptResponse = YesNoPromptResponse();
                     if (yesNoPromptResponse) PerformExerciseTwo();
                     else Environment.Exit(-1);
-                } else if (rotateNumber == stringToRotate.Length)
-                {
-                    Console.WriteLine($"The rotated string is '{stringToRotate}'");
-                }
-                else
-                {
-                    var endOfStringToRotate = stringToRotate.Substring(stringToRotate.Length - rotateNumber); 
-                    var beginningOfStringToRotate = stringToRotate.Substring(0, stringToRotate.Length - rotateNumber);
-                    Console.WriteLine($"The rotated string is '{endOfStringToRotate}{beginningOfStringToRotate}");
-                }
+                } 
+
+                RotateStringAndPrint(stringToRotate, rotateNumber);
 
             }
             else
             {
-                Console.WriteLine($"hmm.. we weren't able to parse -- '{rotateNumberString}' -- into an integer");
+                Console.WriteLine($"hmm.. we weren't able to parse -- '{rotateNumberString}' -- into an integer\n");
                 var yesNoPromptResponse = YesNoPromptResponse();
                 if (yesNoPromptResponse) PerformExerciseTwo();
                 else Environment.Exit(-1);
@@ -162,24 +190,13 @@ namespace RtsReview
         private static void PerformExerciseThree()
         {
 
-            //todo: trim the fat.  isolate what you want to really discuss here. switches might be too basic. referentially transparent code may be to meta? sleep on it
-
-            Console.WriteLine("You chose Exercise #3 --> If you could change 1 thing about your favorite framework/language/platform (pick one), what would it be?");
-
-            Console.WriteLine(
-                "I think this is a hard question... to choose one... one simple thing is switch statements (I even ran into this TODAY when doing these exercises");
-            Console.WriteLine("Switch statements can be frustrating because they are limited in their comparison.  I'd like a feature similar to elixir's cond do, where conditions themselves are tested");
-            Console.WriteLine("for truthyness, in the order they are presented.  I guess I see how it could introduce latent bugs, but think the looseness would work if used correctly.");
+            Console.WriteLine("You chose Exercise #3 --> If you could change 1 thing about your favorite framework/language/platform (pick one), what would it be?\n\n");
 
 
-            Console.WriteLine("\n");
-            Console.WriteLine("I think I have a somewhat unique perspective on C# / .Net because of the order I learned my programming languages. The first programming language I used / worked in a production level environment");
-            Console.WriteLine("was functional.  Transitioning from Functional -> OOP  rather than OOP -> functional is, from what I've gathered, somewhat unique.  I the idea of pure functions ");
-            Console.WriteLine(" - of referentially transparent code - to be super cool / useful / easy to follow.  you always know the 'state' of the data because you know what is returned");
+            Console.WriteLine("If I could change one thing about about C#/.Net, it would be the ease of writing referentially transparent code.\n");
+            Console.WriteLine("When I say 'Referentially Transparent', I am referring to the use of pure functions and immutable objects.  While this is possible in C#/.Net, it isn't necessarily intuitive, and can be confusing.\n");
+            Console.WriteLine("This may, in part, be due to OOP framework in general, but after working in Functional Programming languages I have a deep appreciation for the simplistic set up and intrinsic readability.\n\n");
 
-
-            Console.WriteLine("To wrap up this thought process... it would be nice to have a combination of these things.  Using C# as a strictly typed language, I could easily set /validate what each function was doing");
-            Console.WriteLine("which is an issue I now have going back to functional programming");
         }
 
         private static bool YesNoPromptResponse(string yesNoQuestion = "Do you want to retry this exercise?")
@@ -187,13 +204,14 @@ namespace RtsReview
             ConsoleKey response;
             do
             {
-                Console.Write($"{yesNoQuestion} [y/n] ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{yesNoQuestion} [y/n] ");
                 response = Console.ReadKey(false).Key;   
                 if (response != ConsoleKey.Enter)
                     Console.WriteLine();
 
             } while (response != ConsoleKey.Y && response != ConsoleKey.N);
-
+            Console.ResetColor();
             return response == ConsoleKey.Y;
         }
 
@@ -202,11 +220,21 @@ namespace RtsReview
             var valuesOverComparisonPoint = numberArray.Where(x => x > comparableInt).ToList();
             var valuesUnderComparisonPoint = numberArray.Where(x => x < comparableInt).ToList();
             var valuesTheSameAsComparisonPoint = numberArray.Where(x => x == comparableInt).ToList();
-            
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"[{string.Join(", ", valuesOverComparisonPoint)}] -->  (total of {valuesOverComparisonPoint.Count}) are greater than {comparableInt}");
             Console.WriteLine($"[{string.Join(", ", valuesUnderComparisonPoint)}] -->  (total of {valuesUnderComparisonPoint.Count}) are less than {comparableInt}");
-            Console.WriteLine($"[{string.Join(", ", valuesTheSameAsComparisonPoint)}] -->  (total of {valuesTheSameAsComparisonPoint.Count}) are the same as {comparableInt}");
-
+            Console.WriteLine($"[{string.Join(", ", valuesTheSameAsComparisonPoint)}] -->  (total of {valuesTheSameAsComparisonPoint.Count}) are the same as {comparableInt}\n\n");
+            Console.ResetColor();
         }
+
+        private static void RotateStringAndPrint(string stringToRotate, int rotateNumber)
+        {
+            var endOfStringToRotate = stringToRotate.Substring(stringToRotate.Length - rotateNumber);
+            var beginningOfStringToRotate = stringToRotate.Substring(0, stringToRotate.Length - rotateNumber);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nThe rotated string is '{endOfStringToRotate}{beginningOfStringToRotate}'\n\n");
+            Console.ResetColor();
+        }
+
     }
 }
