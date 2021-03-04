@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 
@@ -144,9 +145,7 @@ namespace RtsReview
                 else
                 {
                     var endOfStringToRotate = stringToRotate.Substring(stringToRotate.Length - rotateNumber); 
-                    Console.WriteLine(endOfStringToRotate);
                     var beginningOfStringToRotate = stringToRotate.Substring(0, stringToRotate.Length - rotateNumber);
-                    Console.WriteLine(beginningOfStringToRotate);
                     Console.WriteLine($"The rotated string is '{endOfStringToRotate}{beginningOfStringToRotate}");
                 }
 
@@ -162,7 +161,22 @@ namespace RtsReview
 
         private static void PerformExerciseThree()
         {
-            Console.WriteLine("You chose Exercise #3 --> ");
+            Console.WriteLine("You chose Exercise #3 --> If you could change 1 thing about your favorite framework/language/platform (pick one), what would it be?");
+
+            Console.WriteLine(
+                "I think this is a hard question... to choose one... one simple thing is switch statements (I even ran into this TODAY when doing these exercises");
+            Console.WriteLine("Switch statements can be frustrating because they are limited in their comparison.  I'd like a feature similar to elixir's cond do, where conditions themselves are tested");
+            Console.WriteLine("for truthyness, in the order they are presented.  I guess I see how it could introduce latent bugs, but think the looseness would work if used correctly.");
+
+
+            Console.WriteLine("\n");
+            Console.WriteLine("I think I have a somewhat unique perspective on C# / .Net because of the order I learned my programming languages. The first programming language I used / worked in a production level environment");
+            Console.WriteLine("was functional.  Transitioning from Functional -> OOP  rather than OOP -> functional is, from what I've gathered, somewhat unique.  I the idea of pure functions ");
+            Console.WriteLine(" - of referentially transparent code - to be super cool / useful / easy to follow.  you always know the 'state' of the data because you know what is returned");
+
+
+            Console.WriteLine("To wrap up this thought process... it would be nice to have a combination of these things.  Using C# as a strictly typed language, I could easily set /validate what each function was doing");
+            Console.WriteLine("which is an issue I now have going back to functional programming");
         }
 
         private static bool YesNoPromptResponse(string yesNoQuestion = "Do you want to retry this exercise?")
