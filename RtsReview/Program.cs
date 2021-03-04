@@ -58,7 +58,7 @@ namespace RtsReview
             if (userArrayStringCount == 0)
             {
                 Console.WriteLine("hmm... it appears no parameter was entered. Please input a valid array for exercise one");
-                var yesNoPromptResponse = YesNoPromptResponse("Do you want to retry this exercise?");
+                var yesNoPromptResponse = YesNoPromptResponse();
                 if (yesNoPromptResponse) PerformExerciseOne();
                 else Environment.Exit(-1);
             }
@@ -66,7 +66,7 @@ namespace RtsReview
             if (!userArrayInput[0].Equals('[') || !userArrayInput[userArrayStringCount - 1].Equals(']'))
             {
                 Console.WriteLine("hmm... it appears your input did either did not start or finish with a bracket -- [  ] ");
-                var yesNoPromptResponse = YesNoPromptResponse("Do you want to retry this exercise?");
+                var yesNoPromptResponse = YesNoPromptResponse();
                 if (yesNoPromptResponse) PerformExerciseOne();
                 else Environment.Exit(-1);
             }
@@ -103,7 +103,7 @@ namespace RtsReview
             else
             {
                 Console.WriteLine($"hmm.. we weren't able to parse -- '{userInputComparableInt}' -- into an integer");
-                var yesNoPromptResponse = YesNoPromptResponse("Do you want to retry this exercise?");
+                var yesNoPromptResponse = YesNoPromptResponse();
                 if (yesNoPromptResponse) PerformExerciseOne();
                 else Environment.Exit(-1);
             }
@@ -111,15 +111,53 @@ namespace RtsReview
 
         private static void PerformExerciseTwo()
         {
-            Console.WriteLine("You chose Exercise #2 --> Rotate the characters in a string by a given input and have the overflow appear at the beginning");
-            // prompt user for a string 
-            // validate they entered something 
-            // prompt for int to cut word by 
-            // get length of string
-            // validate int they gave is in the correct limit (not greater than the lenght of the string) 
-            // get first half of string substring(0, totalLength - int)  
-            // get second half of string substring(int, totalLength) 
-            //recombine 
+            Console.WriteLine("You chose Exercise #2 --> Rotate the characters in a string by a given input and have the overflow appear at the beginning. \n");
+
+            Console.WriteLine("Please enter the string value you would like rotated. \n ");
+            var stringToRotate = Console.ReadLine();
+            if (String.IsNullOrEmpty(stringToRotate))
+            {
+                Console.WriteLine($"hmm.. there doesn't appear to be an entered string -- '{stringToRotate}' -- is the recorded value.");
+                var yesNoPromptResponse = YesNoPromptResponse();
+                if (yesNoPromptResponse) PerformExerciseTwo();
+                else Environment.Exit(-1);
+            }
+
+            Console.WriteLine("\nPlease enter the number you would like to rotate this by (must be a valid integer)");
+
+            var rotateNumberString = Console.ReadLine();
+
+
+            if (Int32.TryParse(rotateNumberString, out int rotateNumber))
+            {
+                if (rotateNumber > stringToRotate.Length)
+                {
+                    Console.WriteLine($"hmm.. the number you entered -- '{rotateNumberString}' -- is longer than the amount of characters in the string.");
+                    Console.WriteLine($"The max number that can be entered is {rotateNumberString.Length}");
+                    var yesNoPromptResponse = YesNoPromptResponse();
+                    if (yesNoPromptResponse) PerformExerciseTwo();
+                    else Environment.Exit(-1);
+                } else if (rotateNumber == stringToRotate.Length)
+                {
+                    Console.WriteLine($"The rotated string is '{stringToRotate}'");
+                }
+                else
+                {
+                    var endOfStringToRotate = stringToRotate.Substring(stringToRotate.Length - rotateNumber); 
+                    Console.WriteLine(endOfStringToRotate);
+                    var beginningOfStringToRotate = stringToRotate.Substring(0, stringToRotate.Length - rotateNumber);
+                    Console.WriteLine(beginningOfStringToRotate);
+                    Console.WriteLine($"The rotated string is '{endOfStringToRotate}{beginningOfStringToRotate}");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine($"hmm.. we weren't able to parse -- '{rotateNumberString}' -- into an integer");
+                var yesNoPromptResponse = YesNoPromptResponse();
+                if (yesNoPromptResponse) PerformExerciseTwo();
+                else Environment.Exit(-1);
+            }
         }
 
         private static void PerformExerciseThree()
@@ -127,7 +165,7 @@ namespace RtsReview
             Console.WriteLine("You chose Exercise #3 --> ");
         }
 
-        private static bool YesNoPromptResponse(string yesNoQuestion)
+        private static bool YesNoPromptResponse(string yesNoQuestion = "Do you want to retry this exercise?")
         {
             ConsoleKey response;
             do
